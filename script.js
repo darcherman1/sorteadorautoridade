@@ -1,4 +1,4 @@
-// script.js - VERSÃO FINAL v4.5 (CORREÇÃO GERAL + CUSTOMIZAÇÃO COMPLETA)
+// script.js - VERSÃO v5.0 (MULTI-PROXY + CORREÇÃO WEB)
 
 const translations = {
     'pt': {
@@ -96,7 +96,7 @@ function setLanguage(lang) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- SELETORES GERAIS ---
+    // --- SELETORES ---
     const loginScreen = document.getElementById('login-screen');
     const mainScreen = document.getElementById('main-screen');
     const connectButton = document.getElementById('connect-button');
@@ -142,19 +142,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const twitchSubMultiplier = document.getElementById('twitch-sub-multiplier');
     const twitchVipMultiplier = document.getElementById('twitch-vip-multiplier');
     
-    // --- VISUAL INPUTS ---
+    // Visual Inputs
     const appWidthSlider = document.getElementById('app-width-slider');
     const stageWidthSlider = document.getElementById('stage-width-slider');
     const sideWidthSlider = document.getElementById('side-width-slider');
     
-    // Palco do Vencedor
+    // Palco Inputs
     const winnerFontSizeSlider = document.getElementById('winner-font-size-slider');
     const winnerNameColorPicker = document.getElementById('winner-name-color-picker');
     const timerFontSizeSlider = document.getElementById('timer-font-size-slider');
     const timerColorPicker = document.getElementById('timer-color-picker');
     const stageBgPicker = document.getElementById('stage-bg-picker');
     
-    // Cores Tags
+    // Tag Inputs
     const subBgPicker = document.getElementById('sub-bg-picker');
     const subTextPicker = document.getElementById('sub-text-picker');
     const vipBgPicker = document.getElementById('vip-bg-picker');
@@ -166,15 +166,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const appBgPicker = document.getElementById('app-bg-picker');
     const pauseBtnPicker = document.getElementById('pause-btn-picker');
     const resetBtnPicker = document.getElementById('reset-btn-picker');
-    
     const listTitleColorPicker = document.getElementById('list-title-color-picker');
     const listTitleSizeSlider = document.getElementById('list-title-size-slider');
     const listContentColorPicker = document.getElementById('list-content-color-picker');
     const listContentSizeSlider = document.getElementById('list-content-size-slider');
-    
     const resetVisualButton = document.getElementById('reset-visual-button');
 
-    // Bots e Awards
+    // Bots & Awards
     const enableTwitchBotCheckbox = document.getElementById('enable-twitch-bot-checkbox');
     const twitchBotUsernameInput = document.getElementById('twitch-bot-username-input');
     const twitchBotOauthInput = document.getElementById('twitch-bot-oauth-input');
@@ -244,8 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(message);
     }
 
-    // --- DEFINIÇÃO DE FUNÇÕES CHAVE ---
-    
+    // --- FUNÇÕES CHAVE (RESET, UI) ---
     function resetGiveawayState() { 
         participants.clear(); 
         allEntries = []; 
@@ -258,16 +255,13 @@ document.addEventListener('DOMContentLoaded', () => {
         winningUsernames.clear(); 
         updateWinnersListUI();
         isGiveawayRunning = false;
-        
         mainTimerDisplay.textContent = "--";
         mainWinnerBox.innerHTML = '<span class="placeholder-text">Aguardando...</span>';
         mainWinnerChat.innerHTML = '<p style="color: #666; font-style: italic;">As mensagens do vencedor aparecerão aqui...</p>';
-        
         if (winnerCountdownInterval) clearInterval(winnerCountdownInterval);
         drawButton.textContent = translations['pt'].drawWinner;
         statusMessage.textContent = translations['pt'].statusWaiting;
         statusMessage.className = 'status-waiting';
-        
         startGiveawayButton.disabled = false;
         pauseGiveawayButton.disabled = true;
         pauseGiveawayButton.classList.remove('paused');
@@ -290,24 +284,14 @@ document.addEventListener('DOMContentLoaded', () => {
         document.addEventListener("mouseup", dragEnd);
         document.addEventListener("mousemove", drag);
         function dragStart(e) {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
-            if (e.target === floatingPanelHeader || e.target.parentNode === floatingPanelHeader) {
-                isDragging = true;
-            }
+            initialX = e.clientX - xOffset; initialY = e.clientY - yOffset;
+            if (e.target === floatingPanelHeader || e.target.parentNode === floatingPanelHeader) isDragging = true;
         }
-        function dragEnd(e) {
-            initialX = currentX;
-            initialY = currentY;
-            isDragging = false;
-        }
+        function dragEnd(e) { initialX = currentX; initialY = currentY; isDragging = false; }
         function drag(e) {
             if (isDragging) {
-                e.preventDefault();
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-                xOffset = currentX;
-                yOffset = currentY;
+                e.preventDefault(); currentX = e.clientX - initialX; currentY = e.clientY - initialY;
+                xOffset = currentX; yOffset = currentY;
                 floatingPanel.style.transform = `translate(calc(-50% + ${xOffset}px), calc(-50% + ${yOffset}px))`;
             }
         }
@@ -331,12 +315,10 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.onclick = () => {
                 tabButtons.forEach(b => b.classList.remove('active'));
                 tabContents.forEach(c => c.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById(btn.dataset.tab).classList.add('active');
+                btn.classList.add('active'); document.getElementById(btn.dataset.tab).classList.add('active');
             };
         });
     }
-
     function setupVisualControls() {
         const root = document.documentElement;
 
@@ -350,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
         timerColorPicker.oninput = (e) => root.style.setProperty('--timer-color', e.target.value);
         stageBgPicker.oninput = (e) => root.style.setProperty('--stage-bg', e.target.value);
 
-        // TAG COLORS
+        // Tags
         subBgPicker.oninput = (e) => root.style.setProperty('--sub-bg', e.target.value);
         subTextPicker.oninput = (e) => root.style.setProperty('--sub-text', e.target.value);
         vipBgPicker.oninput = (e) => root.style.setProperty('--vip-bg', e.target.value);
@@ -369,19 +351,20 @@ document.addEventListener('DOMContentLoaded', () => {
         listContentSizeSlider.oninput = (e) => root.style.setProperty('--list-content-size', e.target.value + 'rem');
 
         resetVisualButton.onclick = () => {
+            // Reset to defaults
             appWidthSlider.value = 1520; stageWidthSlider.value = 2; sideWidthSlider.value = 1;
             winnerFontSizeSlider.value = 3.5; winnerNameColorPicker.value = '#53fc18';
             timerFontSizeSlider.value = 5; timerColorPicker.value = '#ffffff';
-            
             subBgPicker.value = '#53fc18'; subTextPicker.value = '#000000';
             vipBgPicker.value = '#ae70ff'; vipTextPicker.value = '#000000';
-
+            
             primaryColorPicker.value = '#53fc18'; cardTagPicker.value = '#ffd100';
             scrollbarPicker.value = '#53fc18'; stageBgPicker.value = '#151515'; appBgPicker.value = '#27282c';
             pauseBtnPicker.value = '#f39c12'; resetBtnPicker.value = '#e9113c';
             listTitleColorPicker.value = '#f0f1f1'; listContentColorPicker.value = '#f0f1f1';
             listTitleSizeSlider.value = 1.1; listContentSizeSlider.value = 0.95;
             
+            // Apply
             root.style.setProperty('--app-max-width', '95rem'); root.style.setProperty('--stage-flex', 2);
             root.style.setProperty('--side-flex', 1); root.style.setProperty('--primary-color', '#53fc18');
             root.style.setProperty('--winner-name-size', '3.5rem'); root.style.setProperty('--winner-name-color', '#53fc18');
@@ -396,36 +379,46 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // --- CONEXÃO ---
+    // --- CONEXÃO MULTI-PROXY (CORREÇÃO FUNDAMENTAL) ---
     async function handleConnect() {
         const k = kickChannelInput.value.trim().toLowerCase();
         const t = twitchChannelInput.value.trim().toLowerCase();
         if (!k && !t) { showAlert('alertNoChannel'); return; }
-        
-        connectButton.disabled = true;
-        connectButton.textContent = 'Conectando...';
-        
+        connectButton.disabled = true; connectButton.textContent = 'Conectando...';
         try {
             if (k) {
+                // TENTA 2 PROXIES DIFERENTES SE UM FALHAR
+                let chatroomId = null;
+                const url = `https://kick.com/api/v1/channels/${k}`;
+                
+                // TENTATIVA 1: AllOrigins Raw (Melhor para HTML local)
                 try {
-                    // PROXY CORRIGIDO
-                    const targetUrl = `https://kick.com/api/v1/channels/${k}`;
-                    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`;
-                    const res = await fetch(proxyUrl);
-                    if (!res.ok) throw new Error('Erro de rede ao conectar na Kick');
-                    const data = await res.json();
-                    
-                    if (data && data.chatroom && data.chatroom.id) {
-                        kickChatroomId = data.chatroom.id;
-                        kickChannel = k;
-                        connectedKickChannel.textContent = k;
-                        connectedKickChannel.classList.add('platform-kick');
-                        connectedKickChannel.style.display = 'inline-block';
-                    } else {
-                        throw new Error('ID da sala Kick não encontrado');
+                    const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+                    if(res.ok) {
+                        const data = await res.json();
+                        if(data && data.chatroom) chatroomId = data.chatroom.id;
                     }
-                } catch (kickError) {
-                    throw new Error(`Kick: ${kickError.message}`);
+                } catch(e) { console.log("Proxy 1 falhou, tentando 2..."); }
+
+                // TENTATIVA 2: Corsproxy (Fallback)
+                if(!chatroomId) {
+                    try {
+                        const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(url)}`);
+                        if(res.ok) {
+                            const data = await res.json();
+                            if(data && data.chatroom) chatroomId = data.chatroom.id;
+                        }
+                    } catch(e) { console.log("Proxy 2 falhou."); }
+                }
+
+                if (chatroomId) {
+                    kickChatroomId = chatroomId;
+                    kickChannel = k;
+                    connectedKickChannel.textContent = k;
+                    connectedKickChannel.classList.add('platform-kick');
+                    connectedKickChannel.style.display = 'inline-block';
+                } else {
+                    throw new Error('Não foi possível obter o ID da sala Kick. Tente novamente.');
                 }
             } else { connectedKickChannel.style.display = 'none'; }
 
@@ -438,12 +431,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             loadSettings();
             showScreen('main');
-        } catch (e) {
-            showAlert('alertConnectFail', e.message);
-        } finally {
-            connectButton.disabled = false;
-            connectButton.textContent = translations['pt'].connect;
-        }
+        } catch (e) { showAlert('alertConnectFail', e.message); } 
+        finally { connectButton.disabled = false; connectButton.textContent = translations['pt'].connect; }
     }
 
     // --- HELPER BOTS ---
@@ -458,31 +447,20 @@ document.addEventListener('DOMContentLoaded', () => {
             if (u.ok) { const ud = await u.json(); if (ud.data?.[0]) twitchBroadcasterId = ud.data[0].id; }
         } catch (e) { console.error(e); }
     }
-
-    function sendTwitchChat(messageContent) {
-        if (twitchClient && twitchClient.readyState() === 'OPEN') twitchClient.say(twitchChannel, messageContent).catch(console.error);
-    }
-    async function sendTwitchAnnouncement(messageContent, color = 'primary') {
+    function sendTwitchChat(msg) { if (twitchClient && twitchClient.readyState() === 'OPEN') twitchClient.say(twitchChannel, msg).catch(console.error); }
+    async function sendTwitchAnnouncement(msg, color='primary') {
         const cleanToken = twitchBotOauthInput.value.trim().replace('oauth:', '');
-        if (!cleanToken || !twitchClientId || !twitchBroadcasterId || !twitchBotId) return sendTwitchChat(messageContent);
-        try {
-            await fetch(`https://api.twitch.tv/helix/chat/announcements?broadcaster_id=${twitchBroadcasterId}&moderator_id=${twitchBotId}`, {
-                method: 'POST', headers: { 'Client-Id': twitchClientId, 'Authorization': `Bearer ${cleanToken}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: messageContent, color: color })
-            });
-        } catch (e) { sendTwitchChat(messageContent); }
+        if (!cleanToken || !twitchClientId || !twitchBroadcasterId || !twitchBotId) return sendTwitchChat(msg);
+        try { await fetch(`https://api.twitch.tv/helix/chat/announcements?broadcaster_id=${twitchBroadcasterId}&moderator_id=${twitchBotId}`, { method: 'POST', headers: { 'Client-Id': twitchClientId, 'Authorization': `Bearer ${cleanToken}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ message: msg, color: color }) }); } catch { sendTwitchChat(msg); }
     }
     function sendTwitchMessage(msg, force, color) { if (force) sendTwitchAnnouncement(msg, color); else sendTwitchChat(msg); }
-
-    async function sendKickletMessage(messageContent) {
+    async function sendKickletMessage(msg) {
         const token = kickletApiTokenInput.value.trim();
         if (!enableKickBotCheckbox.checked || !token) return;
-        try { await fetch('https://kicklet.app/api/kick/message', { method: 'POST', headers: { 'Authorization': `apitoken ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ content: messageContent }) }); } catch (e) { console.error(e); }
+        try { await fetch('https://kicklet.app/api/kick/message', { method: 'POST', headers: { 'Authorization': `apitoken ${token}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ content: msg }) }); } catch (e) { console.error(e); }
     }
-
     function sendTwitchClosedMessage() { sendTwitchMessage(twitchClosedMessageInput.value, twitchUseAnnouncementCheckbox.checked, twitchAnnouncementColorSelect.value); }
     function sendKickClosedMessage() { sendKickletMessage(kickClosedMessageInput.value); }
-
     function isUserAllowed(userStatus) {
         if (userStatus.isMod) return allowModsCheckbox.checked;
         if (userStatus.isVip) return allowVipsCheckbox.checked;
@@ -490,18 +468,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return allowViewersCheckbox.checked;
     }
 
-    // --- LÓGICA SORTEIO ---
+    // --- START/PAUSE ---
     async function handleStartGiveaway() {
         if (!kickChannel && !twitchChannel) return;
         if(!isGiveawayRunning) resetGiveawayState();
-        
         isGiveawayRunning = true;
-        startGiveawayButton.disabled = true;
-        pauseGiveawayButton.disabled = false;
+        startGiveawayButton.disabled = true; pauseGiveawayButton.disabled = false;
         pauseGiveawayButton.classList.remove('paused');
-        statusMessage.textContent = translations['pt'].statusConnected;
-        statusMessage.className = 'status-connected';
-
+        statusMessage.textContent = translations['pt'].statusConnected; statusMessage.className = 'status-connected';
         if (twitchChannel) {
             if (enableTwitchBotCheckbox.checked) await validateTwitchTokenAndGetIds();
             connectToTwitch();
@@ -518,49 +492,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     }
-
     function handlePauseGiveaway() {
         isGiveawayRunning = !isGiveawayRunning;
         if (isGiveawayRunning) {
-            pauseGiveawayButton.textContent = translations['pt'].pauseGiveaway;
-            pauseGiveawayButton.classList.remove('paused');
-            statusMessage.textContent = translations['pt'].statusConnected;
-            statusMessage.className = 'status-connected';
+            pauseGiveawayButton.textContent = translations['pt'].pauseGiveaway; pauseGiveawayButton.classList.remove('paused'); statusMessage.textContent = translations['pt'].statusConnected; statusMessage.className = 'status-connected';
         } else {
-            pauseGiveawayButton.textContent = translations['pt'].resumeGiveaway;
-            pauseGiveawayButton.classList.add('paused');
-            statusMessage.textContent = translations['pt'].statusPaused;
-            statusMessage.className = 'status-waiting';
-            sendTwitchClosedMessage(); sendKickClosedMessage();
+            pauseGiveawayButton.textContent = translations['pt'].resumeGiveaway; pauseGiveawayButton.classList.add('paused'); statusMessage.textContent = translations['pt'].statusPaused; statusMessage.className = 'status-waiting'; sendTwitchClosedMessage(); sendKickClosedMessage();
         }
     }
 
-    // --- KICK CONNECTION (PING/PONG) ---
+    // --- KICK WS ---
     function connectToKick() {
         if (kickWs) { try { kickWs.close(); } catch(e){} }
-        
         kickWs = new WebSocket('wss://ws-us2.pusher.com/app/32cbd69e4b950bf97679?protocol=7&client=js&version=8.4.0&flash=false');
-        
-        kickWs.onopen = () => {
-            console.log('Kick Connected');
-            kickWs.send(JSON.stringify({ event: 'pusher:subscribe', data: { auth: '', channel: `chatrooms.${kickChatroomId}.v2` } }));
-        };
-        
+        kickWs.onopen = () => { console.log('Kick OK'); kickWs.send(JSON.stringify({ event: 'pusher:subscribe', data: { auth: '', channel: `chatrooms.${kickChatroomId}.v2` } })); };
         kickWs.onmessage = (event) => {
             const parsed = JSON.parse(event.data);
-            if (parsed.event === 'pusher:ping') {
-                kickWs.send(JSON.stringify({ event: 'pusher:pong', data: {} }));
-                return;
-            }
+            if (parsed.event === 'pusher:ping') { kickWs.send(JSON.stringify({ event: 'pusher:pong', data: {} })); return; }
             if (parsed.event === 'App\\Events\\ChatMessageEvent') handleKickMessage(JSON.parse(parsed.data));
         };
-
-        kickWs.onclose = () => {
-            console.log('Kick Closed. Reconnecting...');
-            if(kickChannel) setTimeout(connectToKick, 5000);
-        };
+        kickWs.onclose = () => { console.log('Kick Reconnecting...'); if(kickChannel) setTimeout(connectToKick, 5000); };
     }
-
     function handleKickMessage(msgData) {
         const user = msgData.sender; if (!user) return;
         const uniqueId = `kick-${user.username}`;
@@ -572,7 +524,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (winningUsernames.has(user.username.toLowerCase())) return;
         const key = keywordInput.value.trim().toLowerCase();
         if (key !== '' && msgData.content.trim().toLowerCase() !== key) return;
-        
         const b = user.identity?.badges || [];
         const isMod = b.some(x => x.type === 'moderator' || x.type === 'broadcaster');
         const isSub = b.some(x => x.type === 'subscriber' || x.type === 'founder');
@@ -580,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isUserAllowed({ isMod, isSub, isVip })) addParticipant(user.username, 'kick', { isSub, isVip });
     }
 
-    // --- TWITCH CONNECTION ---
+    // --- TWITCH WS ---
     function connectToTwitch() {
         if (twitchClient) { try { twitchClient.disconnect(); } catch(e){} }
         twitchClient = new tmi.Client({ connection: { secure: true, reconnect: true }, channels: [twitchChannel] });
@@ -604,7 +555,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isUserAllowed({ isMod, isSub, isVip })) addParticipant(user, 'twitch', { isSub, isVip });
     }
 
-    // --- PARTICIPANTES ---
     function addParticipant(username, platform, status) {
         const uniqueId = `${platform}-${username}`;
         if (participants.has(uniqueId)) return;
@@ -619,10 +569,8 @@ document.addEventListener('DOMContentLoaded', () => {
         participants.set(uniqueId, { username, platform, entries, tags, hasWon: false, isExcluded: false });
         updateParticipantListUI();
     }
-
     function updateParticipantListUI() {
-        participantList.innerHTML = '';
-        allEntries = [];
+        participantList.innerHTML = ''; allEntries = [];
         participants.forEach((p, id) => {
             const li = document.createElement('li'); li.dataset.uniqueId = id;
             li.innerHTML = `<img class="platform-icon" src="${p.platform === 'kick' ? 'https://kick.com/favicon.ico' : 'https://www.twitch.tv/favicon.ico'}"> <span class="winner-name-span">${p.username}</span>`;
@@ -635,19 +583,14 @@ document.addEventListener('DOMContentLoaded', () => {
             participantList.prepend(li);
             if (!p.hasWon && !p.isExcluded) { for(let i=0; i<p.entries; i++) allEntries.push(id); }
         });
-        participantCount.textContent = participants.size;
-        drawButton.disabled = allEntries.length === 0;
+        participantCount.textContent = participants.size; drawButton.disabled = allEntries.length === 0;
     }
-
-    function toggleParticipantExclusion(id) {
-        const p = participants.get(id); if (p) { p.isExcluded = !p.isExcluded; updateParticipantListUI(); }
-    }
+    function toggleParticipantExclusion(id) { const p = participants.get(id); if (p) { p.isExcluded = !p.isExcluded; updateParticipantListUI(); } }
     function appendMessageToWinnerChat(message, chatBox) {
         if (!hasWinnerResponded) { chatBox.innerHTML = ''; chatBox.classList.remove('no-messages'); hasWinnerResponded = true; }
         const p = document.createElement('p'); p.textContent = message; chatBox.appendChild(p); chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    // --- SORTEIO ---
     function drawWinner() {
         updateParticipantListUI();
         if (allEntries.length === 0) { showAlert('alertNoParticipants'); return; }
@@ -658,12 +601,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const chance = ((winnerObj.entries / allEntries.length) * 100).toFixed(1);
         runMainScreenAnimation(winnerObj.username, winnerId, winnerObj.platform, chance, winnerObj.tags);
     }
-
     function runMainScreenAnimation(name, id, platform, chance, tags) {
         if (winnerCountdownInterval) clearInterval(winnerCountdownInterval);
-        mainWinnerChat.innerHTML = ''; mainWinnerChat.classList.remove('no-messages');
-        mainWinnerBox.innerHTML = '';
-        
+        mainWinnerChat.innerHTML = ''; mainWinnerChat.classList.remove('no-messages'); mainWinnerBox.innerHTML = '';
         const iconEl = document.createElement('img'); iconEl.className = 'modal-platform-icon';
         iconEl.src = platform === 'kick' ? 'https://kick.com/favicon.ico' : 'https://www.twitch.tv/favicon.ico';
         iconEl.style.display = 'none';
@@ -671,22 +611,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const tagsContainer = document.createElement('span'); tagsContainer.style.display = 'none';
         if(tags) tags.forEach(t => { const s = document.createElement('span'); s.className = `status-tag ${t.class}`; s.textContent = t.text; tagsContainer.appendChild(s); });
         mainWinnerBox.append(iconEl, nameEl, tagsContainer);
-
         currentMonitoredWinnerId = id; currentMonitoredChatbox = mainWinnerChat; hasWinnerResponded = false;
         const waitingP = document.createElement('p'); waitingP.textContent = translations['pt'].chatWaitingForMessage;
         waitingP.style.opacity = '0.7'; mainWinnerChat.appendChild(waitingP);
-
         const duration = parseInt(winnerTimerDurationInput.value) || 30;
         const finalize = () => {
             nameEl.textContent = name; iconEl.style.display = 'inline-block'; tagsContainer.style.display = 'inline-block';
             drawButton.disabled = false; drawButton.textContent = translations['pt'].drawAgain;
-            
             let prize = floatingMessageInput && floatingMessageInput.value.trim() ? floatingMessageInput.value : translations['pt'].defaultAwardFallback;
             let msg = announcementMessageInput.value.replace('{winner}', name).replace('{platform}', platform).replace('{chance}', chance).replace('{award}', prize);
-            
             sendTwitchMessage(msg, twitchUseAnnouncementCheckbox.checked, twitchAnnouncementColorSelect.value);
             if(kickChannel) sendKickletMessage(msg);
-
             if (duration > 0) {
                 let t = duration; mainTimerDisplay.textContent = t; mainTimerDisplay.style.color = '#fff';
                 winnerCountdownInterval = setInterval(() => {
@@ -695,30 +630,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (t <= 0) { clearInterval(winnerCountdownInterval); mainTimerDisplay.textContent = "00"; }
                 }, 1000);
             } else mainTimerDisplay.textContent = "--";
-
             winners.push({name, date: new Date().toLocaleTimeString(), platform, tags});
             winningUsernames.add(name.toLowerCase());
             if (participants.get(id)) participants.get(id).hasWon = true;
             updateParticipantListUI(); updateWinnersListUI();
         };
-
         if (animationSelect.value === 'char-scramble') {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*'; let frame = 0;
             const interval = setInterval(() => {
                 let out = ''; let done = true;
-                for(let i=0; i<name.length; i++) {
-                    const p = Math.min(frame / (40 + i*2), 1); if(p<1) done=false;
-                    out += (Math.random() < p) ? name[i] : chars[Math.floor(Math.random()*chars.length)];
-                }
-                nameEl.textContent = out;
-                if(done) { clearInterval(interval); finalize(); } frame++;
+                for(let i=0; i<name.length; i++) { const p = Math.min(frame / (40 + i*2), 1); if(p<1) done=false; out += (Math.random() < p) ? name[i] : chars[Math.floor(Math.random()*chars.length)]; }
+                nameEl.textContent = out; if(done) { clearInterval(interval); finalize(); } frame++;
             }, 30);
         } else finalize();
     }
-
     function updateWinnersListUI() {
-        if (!winnersList) return;
-        winnersList.innerHTML = '';
+        if (!winnersList) return; winnersList.innerHTML = '';
         winners.forEach(w => {
             const li = document.createElement('li');
             let th = ''; if(w.tags) w.tags.forEach(t => { th += `<span class="status-tag ${t.class}" style="margin-left:5px;">${t.text}</span>`; });
@@ -728,29 +655,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (winnersCount) winnersCount.textContent = winners.length;
     }
 
-    // --- AWARDS & INIT ---
-    
-    // REINSERINDO FUNÇÕES DE AWARDS
-    function startAwardsMonitor() { 
-        lastValidAwards = []; 
-        awardsApiAttempts = 0; 
-        awardsUsingProxy = false; 
-        fetchAwards(); 
-        if(awardsApiTimer) clearInterval(awardsApiTimer); 
-        awardsApiTimer = setInterval(() => { awardsApiAttempts = 0; fetchAwards(); }, 3000); 
-    }
-    
-    function stopAwardsMonitor() { 
-        if (awardsApiTimer) { clearInterval(awardsApiTimer); awardsApiTimer = null; } 
-        if (awardsListContainer) awardsListContainer.innerHTML = ''; 
-        lastValidAwards = []; 
-    }
-
     function renderAwards(awards) {
-        if (!Array.isArray(awards) || awards.length === 0) {
-            if (lastValidAwards.length === 0) { awardsListContainer.innerHTML = `<div class="empty">${translations['pt'].awardsStatusNoAwards}</div>`; awardsStatusMessage.style.display = 'none'; }
-            return;
-        }
+        if (!Array.isArray(awards) || awards.length === 0) { if (lastValidAwards.length === 0) { awardsListContainer.innerHTML = `<div class="empty">${translations['pt'].awardsStatusNoAwards}</div>`; awardsStatusMessage.style.display = 'none'; } return; }
         if (JSON.stringify(lastValidAwards) === JSON.stringify(awards)) return;
         lastValidAwards = [...awards]; awardsListContainer.innerHTML = ''; awardsStatusMessage.style.display = 'none';
         awards.forEach(award => {
@@ -767,23 +673,26 @@ document.addEventListener('DOMContentLoaded', () => {
             card.append(tag, title); awardsListContainer.appendChild(card);
         });
     }
-
     async function fetchAwards() {
         const dv = awardsDvInput.value.trim(); const key = awardsApiKeyInput.value.trim();
         if (!dv || !key) { awardsListContainer.innerHTML = `<div class="error">${translations['pt'].awardsStatusError}</div>`; awardsStatusMessage.style.display = 'none'; return; }
         if (isAwardsLoading) return; isAwardsLoading = true; awardsApiAttempts++;
         const url = `https://megamu.net/dvapi.php?dv=${encodeURIComponent(dv)}&key=${encodeURIComponent(key)}&action=getawards&_=${Date.now()}`;
-        let target = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+        // PROXY BACKUP SYSTEM
+        let target = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+        if (awardsUsingProxy || awardsApiAttempts > 1) target = `https://corsproxy.io/?${encodeURIComponent(url)}`;
         if (lastValidAwards.length === 0) awardsListContainer.innerHTML = `<div class="empty">${translations['pt'].awardsStatusLoading}</div>`; awardsStatusMessage.style.display = 'none';
         try {
             const r = await fetch(target); if (!r.ok) throw new Error('HTTP');
-            let d = await r.json(); if (d && (d.result === 1 || d.awards)) renderAwards(d.awards || []);
+            let d = await r.json(); 
+            if (d && (d.result === 1 || d.awards)) renderAwards(d.awards || []);
             else if (lastValidAwards.length === 0) awardsListContainer.innerHTML = `<div class="empty">${translations['pt'].awardsStatusNoAwards}</div>`;
         } catch (e) {
             if (awardsApiAttempts === 1) { isAwardsLoading = false; fetchAwards(); return; }
             if (lastValidAwards.length === 0) awardsListContainer.innerHTML = `<div class="error">${translations['pt'].awardsStatusApiError}</div>`;
         } finally { isAwardsLoading = false; }
     }
+    function startAwardsMonitor() { lastValidAwards = []; awardsApiAttempts = 0; awardsUsingProxy = false; fetchAwards(); if(awardsApiTimer) clearInterval(awardsApiTimer); awardsApiTimer = setInterval(() => { awardsApiAttempts = 0; fetchAwards(); }, 3000); }
 
     function saveSettings() {
         const root = document.documentElement;
@@ -807,19 +716,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 appMaxWidth: root.style.getPropertyValue('--app-max-width') || '95rem',
                 stageFlex: root.style.getPropertyValue('--stage-flex') || 2,
                 sideFlex: root.style.getPropertyValue('--side-flex') || 1,
-                
-                // NOME E TIMER
                 winnerNameSize: root.style.getPropertyValue('--winner-name-size') || '3.5rem',
                 winnerNameColor: root.style.getPropertyValue('--winner-name-color') || '#53fc18',
                 timerSize: root.style.getPropertyValue('--timer-size') || '5rem',
                 timerColor: root.style.getPropertyValue('--timer-color') || '#ffffff',
-                
-                // TAG COLORS (SALVA)
                 subBg: root.style.getPropertyValue('--sub-bg') || '#53fc18',
                 subText: root.style.getPropertyValue('--sub-text') || '#000000',
                 vipBg: root.style.getPropertyValue('--vip-bg') || '#ae70ff',
                 vipText: root.style.getPropertyValue('--vip-text') || '#000000',
-                
                 primaryColor: root.style.getPropertyValue('--primary-color') || '#53fc18',
                 cardTagColor: root.style.getPropertyValue('--card-tag-color') || '#ffd100',
                 scrollbarColor: root.style.getPropertyValue('--scrollbar-color') || '#53fc18',
@@ -858,19 +762,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(s.visual.appMaxWidth) root.style.setProperty('--app-max-width', s.visual.appMaxWidth);
                 root.style.setProperty('--stage-flex', s.visual.stageFlex);
                 if(s.visual.sideFlex) root.style.setProperty('--side-flex', s.visual.sideFlex);
-                
-                // NOME E TIMER LOAD
                 if(s.visual.winnerNameSize) root.style.setProperty('--winner-name-size', s.visual.winnerNameSize);
                 if(s.visual.winnerNameColor) root.style.setProperty('--winner-name-color', s.visual.winnerNameColor);
                 if(s.visual.timerSize) root.style.setProperty('--timer-size', s.visual.timerSize);
                 if(s.visual.timerColor) root.style.setProperty('--timer-color', s.visual.timerColor);
-
-                // TAGS LOAD
                 if(s.visual.subBg) root.style.setProperty('--sub-bg', s.visual.subBg);
                 if(s.visual.subText) root.style.setProperty('--sub-text', s.visual.subText);
                 if(s.visual.vipBg) root.style.setProperty('--vip-bg', s.visual.vipBg);
                 if(s.visual.vipText) root.style.setProperty('--vip-text', s.visual.vipText);
-                
                 root.style.setProperty('--primary-color', s.visual.primaryColor);
                 if(s.visual.cardTagColor) root.style.setProperty('--card-tag-color', s.visual.cardTagColor);
                 if(s.visual.scrollbarColor) root.style.setProperty('--scrollbar-color', s.visual.scrollbarColor);
@@ -886,19 +785,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(appWidthSlider) appWidthSlider.value = parseFloat(s.visual.appMaxWidth) || 1520;
                 stageWidthSlider.value = s.visual.stageFlex;
                 if(sideWidthSlider) sideWidthSlider.value = s.visual.sideFlex || 1;
-                
-                // INPUTS NOME/TIMER
                 if(winnerFontSizeSlider) winnerFontSizeSlider.value = parseFloat(s.visual.winnerNameSize) || 3.5;
                 if(winnerNameColorPicker) winnerNameColorPicker.value = s.visual.winnerNameColor || '#53fc18';
                 if(timerFontSizeSlider) timerFontSizeSlider.value = parseFloat(s.visual.timerSize) || 5;
                 if(timerColorPicker) timerColorPicker.value = s.visual.timerColor || '#ffffff';
-                
-                // INPUTS TAGS
                 if(subBgPicker) subBgPicker.value = s.visual.subBg || '#53fc18';
                 if(subTextPicker) subTextPicker.value = s.visual.subText || '#000000';
                 if(vipBgPicker) vipBgPicker.value = s.visual.vipBg || '#ae70ff';
                 if(vipTextPicker) vipTextPicker.value = s.visual.vipText || '#000000';
-                
                 primaryColorPicker.value = s.visual.primaryColor;
                 if(cardTagPicker) cardTagPicker.value = s.visual.cardTagColor || '#ffd100';
                 if(scrollbarPicker) scrollbarPicker.value = s.visual.scrollbarColor || '#53fc18';
