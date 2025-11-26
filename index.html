@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sorteador Stage Mode - v4.4 Custom</title>
+    <meta name="description" content="Ferramenta de sorteio para Kick e Twitch">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app-wrapper">
+        
+        <div id="app-container" data-nosnippet>
+            <div id="login-screen" class="screen">
+                <h1 data-lang-key="appTitle">Ferramenta de Sorteio</h1>
+                <p data-lang-key="loginSubtitle">Digite o(s) canal(is) para o sorteio. Você pode conectar um ou ambos.</p>
+                <div class="login-inputs">
+                    <div class="login-group">
+                        <label for="kick-channel-input" data-lang-key="kickChannel">Canal Kick</label>
+                        <input type="text" id="kick-channel-input" placeholder="Ex: xqc">
+                    </div>
+                    <div class="login-group">
+                        <label for="twitch-channel-input" data-lang-key="twitchChannel">Canal Twitch</label>
+                        <input type="text" id="twitch-channel-input" placeholder="Ex: gaules">
+                    </div>
+                </div>
+                <button id="connect-button" data-lang-key="connect">Conectar</button>
+                <p class="credits" data-lang-key="credits">Versão v4.4 - Tag Colors</p>
+            </div>
+
+            <div id="main-screen" class="screen" style="display: none;">
+                <header>
+                    <div class="channel-info">
+                        <span data-lang-key="connectedTo">Conectado a:</span>
+                        <strong id="connected-kick-channel"></strong>
+                        <strong id="connected-twitch-channel"></strong>
+                    </div>
+                    <button id="open-settings-button" class="icon-button gear-button" aria-label="Configurações">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82-.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06-.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </button>
+                </header>
+
+                <div class="main-content-minimal">
+                    <div class="minimal-column">
+                        <h2><span data-lang-key="participants">Participantes</span> (<span id="participant-count">0</span>)</h2>
+                        <ul id="participant-list"></ul>
+                    </div>
+                    <div class="minimal-column winner-stage-column">
+                        <h2 class="stage-title">Sorteando...</h2>
+                        <div class="stage-content">
+                            <div id="main-timer-display">--</div>
+                            <div class="winner-animation-box" id="main-winner-box"><span class="placeholder-text">Aguardando...</span></div>
+                            <div class="winner-chat-box" id="main-winner-chat"><p style="color: #666; font-style: italic;">As mensagens do vencedor aparecerão aqui...</p></div>
+                        </div>
+                    </div>
+                    <div class="minimal-column">
+                        <div class="split-column-container">
+                            <div class="split-section">
+                                <h2><span data-lang-key="awardsPanelTitle">Prêmios Atuais</span></h2>
+                                <ul id="awards-list-container"></ul>
+                                <p id="awards-status-message" class="status-waiting" data-lang-key="awardsStatusLoading">Aguardando...</p>
+                            </div>
+                            <div class="split-divider"></div>
+                            <div class="split-section">
+                                <h2><span data-lang-key="winners">Vencedores</span> (<span id="winners-count">0</span>)</h2>
+                                <ul id="winners-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-footer">
+                    <p id="status-message" class="status-waiting" data-lang-key="statusWaiting">Pressione "Iniciar Sorteio" para conectar.</p>
+                    <div class="footer-buttons">
+                        <button id="start-giveaway-button" data-lang-key="startGiveaway">Iniciar Sorteio</button>
+                        <button id="draw-button" disabled data-lang-key="drawWinner">Sortear Vencedor</button>
+                        <button id="pause-giveaway-button" data-lang-key="pauseGiveaway" disabled>Parar Entradas</button>
+                        <button id="reset-button" class="secondary-action" data-lang-key="reset">Resetar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="settings-overlay" class="settings-overlay" style="display: none;">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h2 data-lang-key="settings">Configurações</h2>
+                    <button id="close-settings-button" class="icon-button close-button">✕</button>
+                </div>
+                <div class="settings-tabs">
+                    <button class="tab-button active" data-tab="tab-general">Geral</button>
+                    <button class="tab-button" data-tab="tab-visual">Visual</button>
+                </div>
+                <div class="settings-scroll-area">
+                    <div id="tab-general" class="tab-content active">
+                        <div class="settings-group">
+                            <button id="change-channel-button" class="small-button" data-lang-key="changeChannel">Trocar Canal</button>
+                            <hr class="settings-divider">
+                            <label for="keyword-input" data-lang-key="keyword">Palavra-chave:</label>
+                            <input type="text" id="keyword-input" placeholder="">
+                            <div class="checkbox-wrapper"><label><input type="checkbox" id="allow-multi-platform-checkbox"><span data-lang-key="allowDualEntry">Entrada dupla</span></label></div>
+                            <label for="winner-timer-duration-input" data-lang-key="timerDuration">Timer (s):</label>
+                            <input type="number" id="winner-timer-duration-input" value="30" min="0">
+                            <label for="animation-select" data-lang-key="animation">Animação:</label>
+                            <select id="animation-select"><option value="char-scramble">Aleatório (letras)</option><option value="none">Nenhuma</option></select>
+                            <div class="checkbox-wrapper" style="background: rgba(83, 252, 24, 0.1); padding: 5px; border-radius: 5px;"><label><input type="checkbox" id="enable-floating-panel-checkbox"><span style="font-weight:bold;">Ativar Janela de Mensagens</span></label></div>
+                        </div>
+                        <div class="settings-group">
+                            <h3 data-lang-key="whoCanParticipate">Participação</h3>
+                            <div class="participation-grid">
+                                <div class="checkbox-wrapper"><label><input type="checkbox" id="allow-viewers-checkbox" checked><span>Viewers</span></label></div>
+                                <div class="checkbox-wrapper"><label><input type="checkbox" id="allow-subs-checkbox" checked><span>Subs</span></label></div>
+                                <div class="checkbox-wrapper"><label><input type="checkbox" id="allow-vips-checkbox" checked><span>VIPs</span></label></div>
+                                <div class="checkbox-wrapper"><label><input type="checkbox" id="allow-mods-checkbox"><span>Mods</span></label></div>
+                            </div>
+                        </div>
+                        <div class="settings-group">
+                            <h3 data-lang-key="multipliers">Multiplicadores</h3>
+                            <div class="multiplier-grid">
+                                <span class="grid-header">Plataforma</span><span class="grid-header">Sub (x)</span><span class="grid-header">VIP (x)</span>
+                                <span class="platform-label" style="color: #53fc18;">Kick</span><input type="number" id="kick-sub-multiplier" value="2" min="1"><input type="number" id="kick-vip-multiplier" value="2" min="1">
+                                <span class="platform-label" style="color: #9146FF;">Twitch</span><input type="number" id="twitch-sub-multiplier" value="2" min="1"><input type="number" id="twitch-vip-multiplier" value="2" min="1">
+                            </div>
+                        </div>
+                        <div class="settings-group">
+                            <h3 data-lang-key="botSettings">Bots</h3>
+                            <div class="bot-section">
+                                <label><input type="checkbox" id="enable-twitch-bot-checkbox"><span>Ativar Bot Twitch</span></label>
+                                <div id="twitch-bot-settings-wrapper" style="margin-top: 10px;">
+                                    <input type="text" id="twitch-bot-username-input" placeholder="Usuário">
+                                    <input type="password" id="twitch-bot-oauth-input" placeholder="Token OAuth">
+                                    <div class="announcement-settings-group">
+                                        <div class="checkbox-wrapper"><label><input type="checkbox" id="twitch-use-announcement-checkbox"><span>Enviar como Anúncio</span></label></div>
+                                        <select id="twitch-announcement-color-select"><option value="primary">Padrão</option><option value="blue">Azul</option><option value="green">Verde</option><option value="orange">Laranja</option><option value="purple">Roxo</option></select>
+                                    </div>
+                                    <label>Msg Início</label><textarea id="start-message-input" rows="2"></textarea>
+                                    <label>Msg Vencedor</label><textarea id="announcement-message-input" rows="2"></textarea>
+                                    <label data-lang-key="twitchClosedMessage">Msg "Parar Entradas"</label><textarea id="twitch-closed-message-input" rows="2"></textarea>
+                                </div>
+                            </div>
+                            <hr class="settings-divider">
+                            <div class="bot-section">
+                                <label><input type="checkbox" id="enable-kick-bot-checkbox"><span>Ativar Bot Kick</span></label>
+                                <div id="kick-bot-settings-wrapper" style="margin-top: 10px;">
+                                    <input type="password" id="kicklet-api-token-input" placeholder="Kicklet API Token">
+                                    <label>Msg Início</label><textarea id="kick-start-message-input" rows="2"></textarea>
+                                    <label>Msg Vencedor</label><textarea id="kick-announcement-message-input" rows="2"></textarea>
+                                    <label data-lang-key="kickClosedMessage">Msg "Parar Entradas"</label><textarea id="kick-closed-message-input" rows="2"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="settings-group">
+                            <label><input type="checkbox" id="enable-awards-overlay-checkbox"><span>Painel de Prêmios</span></label>
+                            <div id="awards-overlay-settings-wrapper" style="margin-top: 10px;">
+                                <input type="text" id="awards-dv-input" placeholder="DV Login">
+                                <input type="password" id="awards-api-key-input" placeholder="API Key">
+                                <label>Msg Anúncio Prêmio</label><textarea id="award-announce-message-input" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="tab-visual" class="tab-content">
+                        <div class="settings-group">
+                            <h3>Layout Geral</h3>
+                            <label>Largura da Janela (Max):</label><input type="range" id="app-width-slider" min="1000" max="3000" step="50" value="1520" style="width: 100%;">
+                            <label style="margin-top: 10px;">Largura das Laterais:</label><input type="range" id="side-width-slider" min="0.2" max="2" step="0.1" value="1" style="width: 100%;">
+                        </div>
+
+                        <div class="settings-group">
+                            <h3>Palco do Vencedor</h3>
+                            <label>Largura (Proporção):</label><input type="range" id="stage-width-slider" min="0.5" max="4" step="0.1" value="2" style="width: 100%;">
+                            
+                            <div class="label-wrapper" style="margin-top: 15px;"><label>Nome do Vencedor (Tamanho):</label></div>
+                            <input type="range" id="winner-font-size-slider" min="1.5" max="6" step="0.1" value="3.5" style="width: 100%;">
+                            
+                            <div class="label-wrapper" style="margin-top: 5px;"><label style="font-size:0.85rem">Cor do Nome:</label></div>
+                            <input type="color" id="winner-name-color-picker" value="#53fc18" style="width: 100%;">
+                            
+                            <div class="label-wrapper" style="margin-top: 15px;"><label>Timer (Tamanho):</label></div>
+                            <input type="range" id="timer-font-size-slider" min="2" max="8" step="0.1" value="5" style="width: 100%;">
+                            
+                            <div class="label-wrapper" style="margin-top: 5px;"><label style="font-size:0.85rem">Cor do Timer:</label></div>
+                            <input type="color" id="timer-color-picker" value="#ffffff" style="width: 100%;">
+                            
+                            <div class="label-wrapper" style="margin-top: 15px;"><label>Cor de Fundo do Palco:</label></div>
+                            <input type="color" id="stage-bg-picker" value="#151515">
+                        </div>
+
+                        <div class="settings-group">
+                            <h3>Cores das Tags (Sub/VIP)</h3>
+                            <div class="multiplier-grid" style="grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                                <span style="font-weight:bold;">SUB</span>
+                                <div><label style="font-size:0.8rem">Fundo:</label><input type="color" id="sub-bg-picker" value="#53fc18"></div>
+                                <div><label style="font-size:0.8rem">Letra:</label><input type="color" id="sub-text-picker" value="#000000"></div>
+                                
+                                <span style="font-weight:bold;">VIP</span>
+                                <div><label style="font-size:0.8rem">Fundo:</label><input type="color" id="vip-bg-picker" value="#ae70ff"></div>
+                                <div><label style="font-size:0.8rem">Letra:</label><input type="color" id="vip-text-picker" value="#000000"></div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3>Listas e Prêmios</h3>
+                            <div class="label-wrapper"><label>Cor dos Títulos:</label></div><input type="color" id="list-title-color-picker" value="#f0f1f1">
+                            <label style="margin-top:5px; display:block; font-size:0.8rem;">Tamanho Título:</label><input type="range" id="list-title-size-slider" min="0.8" max="2" step="0.1" value="1.1" style="width:100%;">
+                            <div class="label-wrapper" style="margin-top:15px;"><label>Cor do Conteúdo:</label></div><input type="color" id="list-content-color-picker" value="#f0f1f1">
+                            <label style="margin-top:5px; display:block; font-size:0.8rem;">Tamanho Conteúdo:</label><input type="range" id="list-content-size-slider" min="0.7" max="1.5" step="0.05" value="0.95" style="width:100%;">
+                            <div class="label-wrapper" style="margin-top:15px;"><label>Cor da Tag (Prêmios):</label></div><input type="color" id="card-tag-picker" value="#ffd100">
+                        </div>
+                        <div class="settings-group">
+                            <h3>Botões e Scroll</h3>
+                            <div class="label-wrapper"><label>Cor Botão "Parar" (Pause):</label></div><input type="color" id="pause-btn-picker" value="#f39c12">
+                            <div class="label-wrapper"><label>Cor Botão "Resetar":</label></div><input type="color" id="reset-btn-picker" value="#e9113c">
+                            <div class="label-wrapper"><label>Cor da Barra de Rolagem:</label></div><input type="color" id="scrollbar-picker" value="#53fc18">
+                        </div>
+                        <div class="settings-group">
+                            <h3>Cores Gerais</h3>
+                            <div class="label-wrapper"><label>Cor Principal (Neon):</label></div><input type="color" id="primary-color-picker" value="#53fc18">
+                            <div class="label-wrapper"><label>Fundo Geral:</label></div><input type="color" id="app-bg-picker" value="#27282c">
+                        </div>
+                        <button id="reset-visual-button" class="secondary-action" style="width: 100%; margin-top: 10px;">Resetar Visual</button>
+                    </div>
+                    <button id="save-settings-button" data-lang-key="saveSettings">Salvar Configurações</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="floating-message-panel" class="floating-panel" style="display: none;">
+            <div id="floating-panel-header" class="panel-header">
+                <span>💬 Enviar Mensagem</span>
+                <button id="close-floating-panel" title="Fechar">✕</button>
+            </div>
+            <div class="panel-content">
+                <textarea id="floating-message-input" rows="3" placeholder="Digite sua mensagem..."></textarea>
+                <div class="floating-buttons">
+                    <button id="floating-send-global">Enviar Global</button>
+                    <button id="floating-send-award">Enviar Prêmio</button>
+                </div>
+            </div>
+        </div>
+        
+    </div> 
+    <div id="tooltip-popup-container" class="tooltip-popup" style="opacity: 0; visibility: hidden;"></div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/tmi.js/dist/tmi.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

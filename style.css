@@ -1,0 +1,332 @@
+:root {
+    /* --- VARIÁVEIS DE CUSTOMIZAÇÃO (TEMA) --- */
+    --bg-color: #1a1b1e;
+    --panel-bg-color: #27282c;
+    
+    /* Cores Principais */
+    --primary-color: #53fc18; 
+    --primary-text-color: #f0f1f1;
+    --secondary-text-color: #a9a9a9;
+    --border-color: #3a3b40;
+    
+    /* Cores Específicas */
+    --card-bg: rgba(0, 0, 0, 0.45);
+    --stage-bg: #151515;
+    --card-tag-color: #ffd100;
+    --scrollbar-color: #53fc18;
+    
+    /* CUSTOMIZAÇÃO DO PALCO */
+    --winner-name-size: 3.5rem;
+    --winner-name-color: #53fc18;
+    --timer-size: 5rem;
+    --timer-color: #ffffff;
+    
+    /* --- NOVO: CORES DAS TAGS --- */
+    --sub-bg: #53fc18;    /* Fundo do Sub */
+    --sub-text: #000000;  /* Letra do Sub */
+    --vip-bg: #ae70ff;    /* Fundo do VIP */
+    --vip-text: #000000;  /* Letra do VIP */
+    
+    /* Botões de Ação */
+    --pause-btn-bg: #f39c12;
+    --reset-btn-bg: #e9113c;
+    
+    /* Estilos de Listas */
+    --list-header-color: #f0f1f1;
+    --list-header-size: 1.1rem;
+    --list-content-color: #f0f1f1;
+    --list-content-size: 0.95rem;
+    
+    /* Tamanhos (Flex e Layout) */
+    --stage-flex: 2; 
+    --side-flex: 1;
+    --app-max-width: 95rem;
+    
+    /* Outras cores fixas */
+    --error-color: #e74c3c;
+    --success-color: #2ecc71;
+    --warning-color: #f39c12;
+    --vip-color: #ae70ff;
+    --twitch-color: #9146FF;
+}
+
+/* --- CUSTOM SCROLLBARS --- */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-color); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { filter: brightness(1.2); }
+
+html { font-size: clamp(14px, 1vw, 16px); }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--primary-text-color);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 2rem 1.5rem;
+    transition: background-color 0.3s;
+}
+
+#app-wrapper { 
+    width: 100%; 
+    max-width: var(--app-max-width); 
+    transition: max-width 0.3s ease; 
+}
+
+#app-container {
+    width: 100%;
+    background-color: var(--panel-bg-color);
+    border-radius: 0.75rem;
+    box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    transition: background-color 0.3s;
+}
+
+.screen { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; flex: 1; height: 100%; }
+
+/* --- LOGIN --- */
+#login-screen { align-items: center; text-align: center; justify-content: center; gap: 1.5rem; }
+.login-inputs { display: flex; gap: 1.5rem; width: 100%; max-width: 40rem; }
+.login-group { flex: 1; text-align: left; }
+.login-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+h1 { color: var(--primary-color); font-size: 2.5rem; margin-bottom: 0.5rem; }
+p { color: var(--secondary-text-color); margin-top: 0; }
+
+input[type="text"], input[type="number"], input[type="password"], select, button, textarea {
+    width: 100%; padding: 0.75rem 0.9375rem; border-radius: 0.5rem; 
+    border: 1px solid var(--border-color); background-color: var(--bg-color);
+    color: var(--primary-text-color); font-size: 1rem; font-family: 'Poppins', sans-serif; 
+    transition: all 0.2s ease;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-color); }
+input[type="color"] { padding: 0; border: none; width: 100%; height: 40px; cursor: pointer; background: none; }
+
+#connect-button { width: 100%; max-width: 40rem; }
+button { background-color: var(--primary-color); color: #000; font-weight: 600; cursor: pointer; border: none; }
+button:hover { filter: brightness(1.1); }
+button:disabled { background-color: var(--border-color); color: var(--secondary-text-color); cursor: not-allowed; }
+.credits { font-size: 0.8rem; color: var(--secondary-text-color); margin-top: 1.5rem; }
+
+/* --- HEADER --- */
+header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 1rem; border-bottom: 2px solid var(--border-color); }
+header .channel-info { display: flex; gap: 0.5rem; align-items: center; }
+header .channel-info strong { background: var(--bg-color); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.9rem;}
+#connected-kick-channel.platform-kick { color: var(--primary-color); }
+#connected-twitch-channel.platform-twitch { color: var(--twitch-color); }
+
+.icon-button { background: transparent; width: 2.5rem; height: 2.5rem; padding: 0.5rem; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: none; color: var(--secondary-text-color); cursor: pointer; }
+.icon-button:hover { background-color: rgba(255,255,255,0.1); color: var(--primary-text-color); }
+.gear-button:hover { transform: rotate(90deg); transition: transform 0.5s ease; }
+
+/* --- LAYOUT --- */
+.main-content-minimal { display: flex; flex: 1; gap: 1rem; overflow: hidden; }
+
+.minimal-column { 
+    flex: var(--side-flex); 
+    display: flex; flex-direction: column; background: var(--bg-color); 
+    border-radius: 0.75rem; border: 1px solid var(--border-color); overflow: hidden; min-width: 150px; 
+    transition: flex 0.3s ease;
+}
+.minimal-column h2 { 
+    padding: 1rem; margin: 0; 
+    font-size: var(--list-header-size); 
+    color: var(--list-header-color);    
+    border-bottom: 1px solid var(--border-color); 
+    background: rgba(0,0,0,0.2); text-align: center; 
+}
+
+.split-column-container { flex: 1; display: flex; flex-direction: column; gap: 0; height: 100%; }
+.split-section { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
+.split-divider { height: 1px; background-color: var(--border-color); width: 100%; }
+
+/* --- PALCO --- */
+.winner-stage-column { 
+    flex: var(--stage-flex); 
+    background: var(--stage-bg); 
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    box-shadow: 0 0 20px rgba(0,0,0,0.5); position: relative; 
+    transition: flex 0.3s ease; 
+}
+.stage-title { color: var(--secondary-text-color) !important; font-size: 0.9rem !important; text-transform: uppercase; letter-spacing: 1px; border-bottom: none !important; background: transparent !important; padding-bottom: 0 !important; }
+.stage-content { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem 2rem; gap: 1rem; text-align: center; }
+
+/* TIMER */
+#main-timer-display { 
+    font-size: var(--timer-size); 
+    color: var(--timer-color); 
+    font-weight: 700; font-variant-numeric: tabular-nums; line-height: 1; 
+    text-shadow: 0 0 15px rgba(255,255,255,0.1); 
+}
+
+#main-winner-box { min-height: 100px; display: flex; align-items: center; justify-content: center; gap: 1rem; width: 100%; flex-wrap: wrap; }
+#main-winner-box img.modal-platform-icon { width: 50px; height: 50px; }
+
+/* NOME VENCEDOR */
+#main-winner-box h1.winner-name { 
+    font-size: var(--winner-name-size); 
+    color: var(--winner-name-color); 
+    margin: 0; line-height: 1.1; 
+    word-break: break-word; text-shadow: 0 0 10px rgba(0,0,0,0.5); 
+}
+#main-winner-box .status-tag { font-size: 1rem; padding: 0.3rem 0.8rem; vertical-align: middle; margin-left: 10px; }
+
+.placeholder-text { color: var(--secondary-text-color); font-size: 1.5rem; opacity: 0.3; font-weight: 600; }
+
+#main-winner-chat { width: 100%; height: 140px; background: rgba(0,0,0,0.4); border: 1px solid var(--border-color); border-radius: 8px; padding: 1rem; text-align: left; overflow-y: auto; font-size: 0.95rem; margin-top: 1rem; }
+#main-winner-chat p { margin-bottom: 6px; line-height: 1.4; word-break: break-word; }
+#main-message-panel textarea { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: white; font-size: 0.9rem; }
+.modal-send-button { padding: 0.6rem; cursor: pointer; border-radius: 0.3rem; border: none; font-weight: bold; flex: 1; transition: opacity 0.2s;}
+.modal-send-button:hover { opacity: 0.9; }
+
+/* --- LISTAS --- */
+#participant-list, #awards-list-container, #winners-list { flex: 1; overflow-y: auto; list-style: none; padding: 0; margin: 0; }
+
+#participant-list li, #winners-list li { 
+    padding: 0.5rem 1rem; 
+    border-bottom: 1px solid var(--border-color); 
+    display: flex; align-items: center; gap: 0.5rem; 
+    cursor: pointer; user-select: none; 
+    font-size: var(--list-content-size);
+    color: var(--list-content-color);
+}
+#participant-list li:hover { background-color: rgba(255,255,255,0.05); }
+
+.participant-excluded { opacity: 0.3; text-decoration: line-through; filter: grayscale(100%); transition: all 0.2s; }
+.participant-winner-style { opacity: 0.5; color: var(--primary-color); }
+
+#winners-list li { background: rgba(255,255,255,0.03); cursor: default; }
+#winners-list li:hover { background: rgba(255,255,255,0.06); }
+
+.platform-icon { width: 1rem; height: 1rem; flex-shrink: 0; }
+.winner-name-span { font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.winner-date-span { font-size: 0.75rem; color: var(--secondary-text-color); margin-left: 5px;}
+
+.award-card { 
+    background: var(--card-bg); 
+    border: 1px solid var(--card-border-color); 
+    padding: 10px; margin: 10px; border-radius: 5px; 
+    display: flex; align-items: center; cursor: pointer; 
+}
+.award-card:hover { background: rgba(255,255,255,0.1); }
+.award-card__tag { 
+    width: 4px; height: 20px; 
+    background: var(--card-tag-color); 
+    border-radius: 2px; margin-right: 10px; 
+    box-shadow: 0 0 5px var(--card-tag-color); 
+}
+.award-card__title { 
+    font-weight: 600; 
+    font-size: var(--list-content-size);
+    color: var(--list-content-color);
+}
+
+/* --- TAGS (AGORA CUSTOMIZÁVEIS) --- */
+.status-tags-container { display: flex; gap: 0.3rem; }
+.status-tag { 
+    font-size: 0.7rem; 
+    padding: 0.1rem 0.4rem; 
+    border-radius: 1rem; 
+    font-weight: bold; 
+    white-space: nowrap; 
+}
+.status-tag.sub { 
+    background: var(--sub-bg); /* <--- USANDO A NOVA VARIÁVEL */
+    color: var(--sub-text);    /* <--- USANDO A NOVA VARIÁVEL */
+}
+.status-tag.vip { 
+    background: var(--vip-bg); /* <--- USANDO A NOVA VARIÁVEL */
+    color: var(--vip-text);    /* <--- USANDO A NOVA VARIÁVEL */
+}
+
+/* --- FOOTER --- */
+.action-footer { display: flex; flex-direction: column; gap: 1rem; padding-top: 1rem; border-top: 2px solid var(--border-color); }
+#status-message { text-align: center; font-weight: 600; margin: 0; font-size: 0.9rem; }
+.status-waiting { color: var(--secondary-text-color); }
+.status-connected { color: var(--success-color); }
+.status-error { color: var(--error-color); }
+.footer-buttons { display: flex; gap: 1rem; }
+.footer-buttons button { flex: 1; padding: 1rem; font-size: 1rem; font-weight: bold; border-radius: 0.5rem; }
+
+#start-giveaway-button { background-color: var(--primary-color); color: #000; }
+#draw-button { background-color: #9146FF; color: #fff; flex: 2; transition: all 0.3s; }
+#draw-button:disabled { background-color: var(--border-color); color: #777; cursor: not-allowed; }
+
+#pause-giveaway-button { background-color: var(--pause-btn-bg); color: #000; flex: 1; }
+#pause-giveaway-button.paused { background-color: var(--success-color); }
+
+.secondary-action { background-color: var(--reset-btn-bg); color: #fff; max-width: 120px; }
+.secondary-action:hover { filter: brightness(0.9); }
+
+/* --- SETTINGS --- */
+.settings-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 2000; display: flex; justify-content: flex-end; overflow: hidden; }
+.settings-content { width: 500px; max-width: 100%; background-color: var(--panel-bg-color); height: 100%; box-shadow: -5px 0 20px rgba(0,0,0,0.6); display: flex; flex-direction: column; animation: slideIn 0.3s ease-out; border-left: 1px solid var(--border-color); }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+.settings-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid var(--border-color); background: var(--panel-bg-color); }
+.settings-header h2 { margin: 0; border: none; padding: 0; background: none; text-align: left; }
+.close-button { font-size: 1.5rem; width: auto; height: auto; padding: 0.5rem; }
+
+.settings-tabs { display: flex; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.1); }
+.tab-button { flex: 1; padding: 1rem; background: none; border: none; color: var(--secondary-text-color); cursor: pointer; font-weight: 600; transition: all 0.2s; border-bottom: 2px solid transparent; }
+.tab-button:hover { color: var(--primary-text-color); background: rgba(255,255,255,0.02); }
+.tab-button.active { color: var(--primary-color); border-bottom: 2px solid var(--primary-color); background: rgba(255,255,255,0.05); }
+
+.settings-scroll-area { flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 2rem; }
+.tab-content { display: none; flex-direction: column; gap: 2rem; }
+.tab-content.active { display: flex; }
+
+.settings-group { display: flex; flex-direction: column; gap: 1rem; background: rgba(0,0,0,0.15); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.05); }
+.settings-group h3 { color: var(--primary-color); font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem; margin-top: 0; }
+.settings-divider { border: 0; border-top: 1px solid var(--border-color); margin: 0.5rem 0; width: 100%; }
+.checkbox-wrapper { display: flex; align-items: center; margin-top: 0.5rem; }
+.checkbox-wrapper label { display: flex; align-items: center; gap: 0.625rem; cursor: pointer; color: var(--primary-text-color); font-size: 0.95rem; }
+.checkbox-wrapper input[type="checkbox"] { width: 1.25rem; height: 1.25rem; margin: 0; cursor: pointer; accent-color: var(--primary-color); }
+.label-wrapper { display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.2rem; margin-top: 0.8rem;}
+.participation-grid, .multiplier-grid { display: grid; grid-template-columns: 90px 1fr 1fr; gap: 0.8rem; align-items: center; margin-top: 0.5rem; }
+.grid-header { font-size: 0.85rem; color: var(--secondary-text-color); font-weight: 600; text-align: center; }
+.platform-label { font-weight: bold; color: var(--primary-text-color); text-align: left; padding-left: 5px; }
+.bot-section { padding: 0.5rem; }
+.announcement-settings-group { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 8px; margin: 10px 0; border: 1px solid var(--border-color); }
+#save-settings-button { margin-top: 1rem; width: 100%; padding: 1rem; background-color: var(--primary-color); color: black; font-size: 1.1rem; border-radius: 0.5rem; }
+.tooltip-trigger { width: 1.2rem; height: 1.2rem; border-radius: 50%; background: var(--border-color); color: var(--primary-text-color); font-weight: bold; font-size: 0.8rem; cursor: help; display: inline-flex; align-items: center; justify-content: center; margin-left: 5px; border: none; }
+.tooltip-popup { position: absolute; background: var(--panel-bg-color); border: 1px solid var(--border-color); padding: 1rem; border-radius: 0.5rem; width: 300px; z-index: 4000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); pointer-events: none; font-size: 0.9rem; line-height: 1.4; }
+
+@media (max-width: 1024px) {
+    .main-content-minimal { flex-direction: column; overflow-y: auto; }
+    .winner-stage-column { order: -1; min-height: 400px; }
+    .minimal-column { min-height: 300px; max-height: none; }
+    .footer-buttons { flex-wrap: wrap; }
+}
+@media (max-width: 600px) {
+    .settings-content { width: 100%; }
+    h1 { font-size: 2rem; }
+    #main-winner-box h1.winner-name { font-size: 2.5rem; }
+}
+
+/* --- FLOATING PANEL --- */
+.floating-panel {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    width: 320px; background-color: var(--panel-bg-color); border: 1px solid var(--border-color);
+    border-radius: 0.5rem; box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 5000;
+    display: flex; flex-direction: column; overflow: hidden;
+}
+.panel-header {
+    background: rgba(0,0,0,0.2); padding: 0.75rem 1rem; display: flex; justify-content: space-between;
+    align-items: center; border-bottom: 1px solid var(--border-color); cursor: move;
+    font-weight: 600; color: var(--primary-text-color);
+}
+.panel-header button { background: none; border: none; color: var(--secondary-text-color); font-size: 1.2rem; cursor: pointer; padding: 0; width: auto; }
+.panel-header button:hover { color: var(--error-color); }
+.panel-content { padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+#floating-message-input { background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: var(--primary-text-color); resize: vertical; font-family: inherit; border-radius: 4px; padding: 0.5rem; width: 100%;}
+.floating-buttons { display: flex; gap: 0.5rem; }
+.floating-buttons button { padding: 0.5rem; font-size: 0.8rem; border-radius: 4px; cursor: pointer; border: none; font-weight: bold; flex: 1; }
+#floating-send-global { background: var(--twitch-color); color: white; }
+#floating-send-award { background: var(--primary-color); color: black; }
